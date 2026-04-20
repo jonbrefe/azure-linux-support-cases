@@ -1,0 +1,7 @@
+cases/*.md
+!cases/README.md
+*.log
+*.tar.gz
+*.tar.xz
+*.sosreport
+.env
