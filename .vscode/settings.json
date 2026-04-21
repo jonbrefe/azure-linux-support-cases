@@ -1,0 +1,19 @@
+{
+    "workbench.colorTheme": "Default Dark Modern",
+    "markdown.styles": [
+        ".vscode/markdown-light-preview.css"
+    ],
+    "markdown.preview.scrollPreviewWithEditor": true,
+    "markdown.preview.scrollEditorWithPreview": true,
+    "[markdown]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "on",
+            "strings": "on",
+            "other": "on"
+        }
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.minimap.enabled": false
+}
