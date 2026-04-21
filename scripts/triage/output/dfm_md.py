@@ -60,6 +60,10 @@ def _render_env(info, report_type, source_dir):
     lines.append(f"| Memory | {info.get('memory_gb', 'N/A')} GB |")
     lines.append(f"| Manufacturer | {info.get('manufacturer', 'N/A')} |")
     lines.append(f"| Product | {info.get('product', 'N/A')} |")
+    if info.get("boot_mode"):
+        lines.append(f"| Boot Mode | {info['boot_mode']} |")
+    if info.get("vm_generation"):
+        lines.append(f"| VM Generation | {info['vm_generation']} |")
     if info.get("date"):
         lines.append(f"| Collected | {info['date']} |")
     if info.get("uptime"):
@@ -88,6 +92,12 @@ def _render_env(info, report_type, source_dir):
         lines.append(f"| Publisher | {imds.get('publisher', 'N/A')} |")
         lines.append(f"| Offer | {imds.get('offer', 'N/A')} |")
         lines.append(f"| SKU | {imds.get('sku', 'N/A')} |")
+        if imds.get("security_type"):
+            lines.append(f"| Security Type | {imds['security_type']} |")
+        if imds.get("secure_boot"):
+            lines.append(f"| Secure Boot | {imds['secure_boot']} |")
+        if imds.get("vtpm"):
+            lines.append(f"| vTPM | {imds['vtpm']} |")
 
         if imds.get("image_id") or imds.get("image_offer"):
             lines.append("")

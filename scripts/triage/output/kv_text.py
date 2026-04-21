@@ -47,6 +47,10 @@ def render(data, report_type, source_dir, config=None):
     lines.append(f"  Memory:        {env.get('memory_gb', 'N/A')} GB")
     lines.append(f"  Manufacturer:  {env.get('manufacturer', 'N/A')}")
     lines.append(f"  Product:       {env.get('product', 'N/A')}")
+    if env.get("boot_mode"):
+        lines.append(f"  Boot Mode:     {env['boot_mode']}")
+    if env.get("vm_generation"):
+        lines.append(f"  VM Generation: {env['vm_generation']}")
     if env.get("date"):
         lines.append(f"  Collected:     {env['date']}")
     if env.get("uptime"):
@@ -74,6 +78,12 @@ def render(data, report_type, source_dir, config=None):
         lines.append(f"  Publisher:       {imds.get('publisher', 'N/A')}")
         lines.append(f"  Offer:           {imds.get('offer', 'N/A')}")
         lines.append(f"  SKU:             {imds.get('sku', 'N/A')}")
+        if imds.get("security_type"):
+            lines.append(f"  Security Type:   {imds['security_type']}")
+        if imds.get("secure_boot"):
+            lines.append(f"  Secure Boot:     {imds['secure_boot']}")
+        if imds.get("vtpm"):
+            lines.append(f"  vTPM:            {imds['vtpm']}")
 
     # Failed services
     failed = env.get("failed_services", [])

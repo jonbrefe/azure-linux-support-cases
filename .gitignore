@@ -41,6 +41,7 @@ env/
 # Case output files (contain customer-specific data)
 cases/*/dfm-notes_*.md
 cases/*/email-draft_*.md
+cases/*/ninjas-swarm_*.md
 
 # Sosreport / supportconfig directories (may appear in cases/)
 cases/*/sosreport-*/

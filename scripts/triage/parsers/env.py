@@ -108,12 +108,40 @@ def _parse_sosreport(path):
                 info["imds"]["image_sku"] = img_ref.get("sku", "")
                 info["imds"]["image_version"] = img_ref.get("version", "")
                 info["imds"]["image_id"] = img_ref.get("id", "")
+            # Security profile (VM generation / Trusted Launch)
+            sec_profile = imds.get("securityProfile", {})
+            if sec_profile:
+                info["imds"]["security_type"] = sec_profile.get("securityType", "")
+                uefi = sec_profile.get("uefiSettings", {})
+                if uefi:
+                    info["imds"]["secure_boot"] = str(uefi.get("secureBootEnabled", ""))
+                    info["imds"]["vtpm"] = str(uefi.get("vTpmEnabled", ""))
             # Tags
             tags = imds.get("tags", "")
             if tags:
                 info["imds"]["tags"] = tags
         except (json.JSONDecodeError, TypeError):
             info["imds"] = {"error": "Failed to parse IMDS JSON"}
+
+    # Boot mode (UEFI vs BIOS)
+    efi_dir = os.path.join(path, "sys", "firmware", "efi")
+    if os.path.isdir(efi_dir):
+        info["boot_mode"] = "UEFI"
+    else:
+        info["boot_mode"] = "BIOS"
+    info["_sources"]["boot_mode"] = "sys/firmware/efi (directory presence)"
+
+    # VM generation derivation
+    sec_type = info.get("imds", {}).get("security_type", "")
+    if sec_type == "TrustedLaunch":
+        info["vm_generation"] = "Gen2 (Trusted Launch)"
+    elif sec_type == "ConfidentialVM":
+        info["vm_generation"] = "Gen2 (Confidential VM)"
+    elif info["boot_mode"] == "UEFI":
+        info["vm_generation"] = "Gen2"
+    else:
+        info["vm_generation"] = "Gen1"
+    info["_sources"]["vm_generation"] = "IMDS securityProfile + sys/firmware/efi"
 
     # Failed services
     failed_path = os.path.join(
@@ -302,6 +330,33 @@ def _parse_supportconfig(path):
             impact="Failed services may indicate incomplete boot or misconfiguration",
             next_step="Review each failed service with systemctl status <service>",
         ))
+
+    # Boot mode (UEFI vs BIOS) — check basic-environment.txt for EFI indicators
+    info["_sources"]["boot_mode"] = "basic-environment.txt"
+    boot_mode = "BIOS"
+    for line in basic.splitlines():
+        if "/sys/firmware/efi" in line or "EFI variables" in line:
+            boot_mode = "UEFI"
+            break
+    # Also check fs-diskio.txt for efivarfs or EFI partition
+    if boot_mode == "BIOS" and diskio:
+        for line in diskio.splitlines():
+            if "efivarfs" in line or "/boot/efi" in line:
+                boot_mode = "UEFI"
+                break
+    info["boot_mode"] = boot_mode
+
+    # VM generation derivation
+    sec_type = info.get("imds", {}).get("security_type", "")
+    if sec_type == "TrustedLaunch":
+        info["vm_generation"] = "Gen2 (Trusted Launch)"
+    elif sec_type == "ConfidentialVM":
+        info["vm_generation"] = "Gen2 (Confidential VM)"
+    elif boot_mode == "UEFI":
+        info["vm_generation"] = "Gen2"
+    else:
+        info["vm_generation"] = "Gen1"
+    info["_sources"]["vm_generation"] = "IMDS securityProfile + boot mode"
 
     # CPU count
     proc = read_file(os.path.join(path, "proc.txt"))
