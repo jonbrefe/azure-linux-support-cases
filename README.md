@@ -66,7 +66,13 @@ python3 triage_extract.py --input /path/to/sosreport --parsers net --format kv
 
 ```
 .github/
-  copilot-instructions.md          # Copilot AI agent instructions
+  copilot-instructions.md          # Copilot AI agent instructions (auto-loaded)
+  prompts/                         # On-demand prompt files (invoked via #name)
+    dfm-notes.prompt.md            # DFM case notes structure and rules
+    email-draft.prompt.md          # Customer email format and tone
+    ninjas-swarm.prompt.md         # Ninjas swarming post + DFM entry
+    icm-draft.prompt.md            # IcM incident draft fields and format
+    labor-tracking.prompt.md       # DFM labor tracking entry and classification
 scripts/
   triage_extract.py                # CLI entry point
   triage/                          # Triage package
@@ -94,6 +100,8 @@ cases/
   <case-number>/                   # Per-case output directory
     dfm-notes_YYYY-MM-DD_HHMM.md  # DFM case notes (timestamped)
     email-draft_YYYY-MM-DD_HHMM.md # Customer email draft (timestamped)
+    ninjas-swarm_YYYY-MM-DD_HHMM.md # Ninjas swarming post + DFM entry
+    icm-draft_YYYY-MM-DD_HHMM.md   # IcM incident draft
 ```
 
 ## Triage Extraction Tool
@@ -174,13 +182,28 @@ The `.github/copilot-instructions.md` file configures GitHub Copilot to act as a
 3. **Distribution Model** — Apply RHEL/SLES/Ubuntu patching and lifecycle rules
 4. **Support Boundaries** — Separate Azure support scope from vendor responsibility
 
+### Prompt Files
+
+Output-specific templates live in `.github/prompts/` and are invoked on demand in Copilot Chat using the `#prompt-name` syntax:
+
+| Prompt | Invoke With | Purpose |
+|--------|-------------|--------|
+| `dfm-notes.prompt.md` | `#dfm-notes` | DFM case notes — structure, content rules, section order |
+| `email-draft.prompt.md` | `#email-draft` | Customer-facing email — format, tone, scope boundaries |
+| `ninjas-swarm.prompt.md` | `#ninjas-swarm` | Ninjas swarming Teams post + DFM entry |
+| `icm-draft.prompt.md` | `#icm-draft` | IcM incident draft with all portal fields |
+| `labor-tracking.prompt.md` | `#labor-tracking` | DFM labor tracking note with classification |
+
+Base rules (data handling, redaction, workflow, git, markdown) stay in `copilot-instructions.md` and are always loaded.
+
 ### Copilot-Generated Outputs
 
 | Output | Location | Purpose |
 |--------|----------|---------|
 | DFM Case Notes | `cases/<id>/dfm-notes_YYYY-MM-DD_HHMM.md` | Internal engineering documentation |
-| Email Draft | `cases/<id>/email-draft_YYYY-MM-DD_HHMM.md` | Customer-facing communication |
-
+| Email Draft | `cases/<id>/email-draft_YYYY-MM-DD_HHMM.md` | Customer-facing communication || Ninjas Swarming | `cases/<id>/ninjas-swarm_YYYY-MM-DD_HHMM.md` | Teams post + DFM entry for cases we swarm (not own) |
+| IcM Incident Draft | `cases/<id>/icm-draft_YYYY-MM-DD_HHMM.md` | Platform team incident with all portal fields |
+| Labor Summary | (inline text) | Short DFM labor tracking note with classification |
 ### Using with Copilot
 
 1. Open the workspace in VS Code with Copilot enabled
