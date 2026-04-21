@@ -1,7 +1,58 @@
-cases/*.md
-!cases/README.md
+# Editor and IDE
+.idea/
+*.suo
+*.user
+.vs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+.commit_msg.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Logs (don't track raw log files)
 *.log
-*.tar.gz
-*.tar.xz
-*.sosreport
+
+# Environment
 .env
+
+# Customer data — NEVER commit these
+*.tar.xz
+*.tar.gz
+*.tar.bz2
+*.tgz
+*.tar.xz.d/
+*.tar.gz.d/
+*.tar.bz2.d/
+
+# Case output files (contain customer-specific data)
+cases/*/dfm-notes_*.md
+cases/*/email-draft_*.md
+
+# Sosreport / supportconfig directories (may appear in cases/)
+cases/*/sosreport-*/
+cases/*/scc_*/
+
+# Triage output (temporary analysis files)
+/tmp/triage-*/
+
+# Compressed support data (analyzed in place, not tracked)
+*.tar.xz
+*.tar.gz
+*.tar.bz2
+*.txz
+*.tgz
+*.sosreport
